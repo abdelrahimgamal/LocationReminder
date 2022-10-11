@@ -22,6 +22,7 @@ import org.robolectric.annotation.Config
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
+// setting max sdk to 30
 @Config(maxSdk = Build.VERSION_CODES.P)
 class SaveReminderViewModelTest {
 
@@ -33,6 +34,8 @@ class SaveReminderViewModelTest {
     private lateinit var fakeDataSource: FakeDataSource
     private lateinit var viewModel: SaveReminderViewModel
 
+
+    // setting up needed resourses
     @Before
     fun setup() {
         stopKoin()
@@ -46,13 +49,14 @@ class SaveReminderViewModelTest {
 
     @Test
     fun saveReminder_allDataSet() {
+        // saving a complete reminder
         val reminderItem = ReminderDataItem("test", "test", "test", 34.34, 34.34)
         mainCoroutineRule.pauseDispatcher()
-
+        // testing that it actually saves and shows loading
         viewModel.validateAndSaveReminder(reminderItem)
         assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(true))
 
-
+        // testing that after it is saved it shows a toast and the loading is gone
         mainCoroutineRule.resumeDispatcher()
         assertThat(viewModel.showToast.getOrAwaitValue(), `is`("Reminder Saved !"))
         assertThat(viewModel.showLoading.getOrAwaitValue(), `is`(false))
@@ -61,16 +65,18 @@ class SaveReminderViewModelTest {
 
     @Test
     fun saveReminder_emptyTitle() {
+        // saving a reminder without title
         val reminderItem = ReminderDataItem("", "test", "test", 34.34, 34.34)
-
+        //testing that it doesnt save and gets validation error and shows the snackbar that it shows in validation errors
         viewModel.validateAndSaveReminder(reminderItem)
         assertThat(viewModel.showSnackBarInt.getOrAwaitValue()).isNotNull()
     }
 
     @Test
     fun saveReminder_emptyLoca() {
+        // saving a reminder without location
         val reminderItem = ReminderDataItem("test", "test", null, 34.34, 34.34)
-
+        //testing that it doesnt save and gets validation error and shows the snackbar that it shows in validation errors
         viewModel.validateAndSaveReminder(reminderItem)
         assertThat(viewModel.showSnackBarInt.getOrAwaitValue()).isNotNull()
     }
@@ -78,8 +84,9 @@ class SaveReminderViewModelTest {
 
     @Test
     fun saveReminder_sucsess_navigateUp() {
+        // saving a complete reminder
         val reminderItem = ReminderDataItem("test", "test", "test", 34.34, 34.34)
-
+// testing that the app navigates up after saving the complete reminder
         viewModel.validateAndSaveReminder(reminderItem)
         assertThat(viewModel.navigationCommand.getOrAwaitValue()).isEqualTo(NavigationCommand.Back)
     }

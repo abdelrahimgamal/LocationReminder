@@ -20,7 +20,11 @@ class FakeDataSource(private val reminders: MutableList<ReminderDTO> = mutableLi
         reminders.add(reminder)
     }
 
+    // test on getting reminders
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
+
+        // we check if we have error then we return result error and handle it in a toast or snackbar else we try to find that reminder by id
+        // if it exists then we return result sucsess with that reminder if not then we return result error reminder doesnt exist
         return when {
             shouldReturnError -> {
                 Result.Error("error in returning data")
@@ -36,10 +40,12 @@ class FakeDataSource(private val reminders: MutableList<ReminderDTO> = mutableLi
         }
     }
 
+    // test on clearing reminders
     override suspend fun deleteAllReminders() {
         reminders.clear()
     }
 
+    // function to set the error by true or false
     fun setShouldReturnError(b: Boolean) {
 
         shouldReturnError = b

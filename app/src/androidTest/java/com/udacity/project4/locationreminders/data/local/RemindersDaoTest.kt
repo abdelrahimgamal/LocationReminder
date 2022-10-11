@@ -48,14 +48,16 @@ class RemindersDaoTest {
 
     @Test
     fun saveReminder_sucsess() = runBlockingTest {
-        val reminder = ReminderDTO("test 1", "desc", "loca", 34.12 , 34.12)
 
-
+        // saving a complete reminder
+        val reminder = ReminderDTO("test 1", "desc", "loca", 34.12, 34.12)
         database.reminderDao().saveReminder(reminder)
 
+
+        // testing on getting the reminder by id from db
         val result = database.reminderDao().getReminderById(reminder.id)
 
-
+// checking that the returned reminder is not null and it has same id,title,description,location,lat and lng
         assertThat(result as ReminderDTO, notNullValue())
         assertThat(result.id, `is`(reminder.id))
         assertThat(result.title, `is`(reminder.title))
@@ -69,11 +71,13 @@ class RemindersDaoTest {
 
     @Test
     fun retriveAllFromDB() = runBlockingTest {
+        // saving 2 reminders
         val reminder = ReminderDTO("test 1", "desc1 ", "loca1 ", 34.12, 34.12)
         val reminder2 = ReminderDTO("test 2", "desc2 ", "loca2 ", 34.12, 34.12)
-
         database.reminderDao().saveReminder(reminder)
         database.reminderDao().saveReminder(reminder2)
+
+        // testing on getting the reminders from database and asserting that the list is not null
 
         val remindersList = database.reminderDao().getReminders()
 
@@ -82,19 +86,20 @@ class RemindersDaoTest {
 
     @Test
     fun insertReminders_deleteAllReminders() = runBlockingTest {
+        // saving 2 reminders
         val reminder = ReminderDTO("test 1", "desc1 ", "loca1 ", 34.12, 34.12)
         val reminder2 = ReminderDTO("test 2", "desc2 ", "loca2 ", 34.12, 34.12)
-
         database.reminderDao().saveReminder(reminder)
         database.reminderDao().saveReminder(reminder2)
 
+        // deleting the 2 reminders
         database.reminderDao().deleteAllReminders()
 
+        // getting the reminder list
         val remindersList = database.reminderDao().getReminders()
-
+        // asserting that the list is empty since we cleared the list
         assertThat(remindersList, `is`(emptyList()))
     }
-
 
 
 }

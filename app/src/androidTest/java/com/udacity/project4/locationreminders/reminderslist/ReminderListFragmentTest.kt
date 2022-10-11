@@ -57,7 +57,7 @@ class ReminderListFragmentTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-
+// initializing the needed resourses abd clearing db before we start
     @Before
     fun init() {
         stopKoin()
@@ -108,6 +108,11 @@ class ReminderListFragmentTest {
 
     @Test
     fun fabClick_goToSave() {
+        // testing the scenario that when we click on add location fab button it goes to saving reminder fragment
+
+
+
+        // creating scenario
         val scenario =
             launchFragmentInContainer<ReminderListFragment>(Bundle.EMPTY, R.style.AppTheme)
         val navController = mock(NavController::class.java)
@@ -116,19 +121,21 @@ class ReminderListFragmentTest {
         scenario.onFragment {
             Navigation.setViewNavController(it.view!!, navController)
         }
-
+// performing click
         onView(withId(R.id.addReminderFAB)).perform(click())
+        // verifying that it goes to save remidner fragment
         verify(navController).navigate(ReminderListFragmentDirections.toSaveReminder())
     }
 
     @Test
     fun withReminders_showsOnScreen() {
+        // saving reminder
         val reminder = ReminderDTO("test 1", "desc", "loca", 34.12 , 34.12)
 
         runBlocking {
             repository.saveReminder(reminder)
         }
-
+// creating a scenario that when the list is not empty the empty list text is not displayed
         val scenario =
             launchFragmentInContainer<ReminderListFragment>(Bundle.EMPTY, R.style.AppTheme)
         val navController = mock(NavController::class.java)
@@ -147,6 +154,8 @@ class ReminderListFragmentTest {
 
     @Test
     fun noReminders_shows_noData() {
+
+        // creating a scenario that when the list is empty the empty list text is displayed
         val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(scenario)
         onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))

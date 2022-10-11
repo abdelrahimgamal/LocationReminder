@@ -32,6 +32,7 @@ class RemindersListViewModelTest {
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
 
+    // setting up needed resourses
     @Before
     fun setup() {
         stopKoin()
@@ -59,9 +60,11 @@ class RemindersListViewModelTest {
 
     @Test
     fun withReminders_listNotEmpty() = runBlockingTest {
+
+        // checking that reminder list returns empty when it is firstly loaded before adding reminders
         viewModel.loadReminders()
         assertThat(viewModel.remindersList.getOrAwaitValue().isEmpty()).isTrue()
-
+        // saving a reminder
         fakeDataSource.saveReminder(
             ReminderDTO(
                 "test1",
@@ -71,17 +74,19 @@ class RemindersListViewModelTest {
                 34.34
             )
         )
+        // checking that list is not empty after adding an item to list
         viewModel.loadReminders()
         assertThat(viewModel.remindersList.getOrAwaitValue().isEmpty()).isFalse()
     }
 
 
-
     @Test
     fun remindersUnavailable_showsError() = runBlockingTest {
+        // setting error to true
         fakeDataSource.setShouldReturnError(true)
-        viewModel.loadReminders()
 
+        // testing that loading reminders after setting error to true returns error and shows a snackbar
+        viewModel.loadReminders()
         assertThat(viewModel.showSnackBar.getOrAwaitValue()).isNotEmpty()
     }
 }

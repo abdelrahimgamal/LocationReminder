@@ -31,6 +31,8 @@ class RemindersLocalRepositoryTest {
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
+
+    // initializing the db before we start using it
     @Before
     fun initDatabase() {
         database = Room.inMemoryDatabaseBuilder(
@@ -41,6 +43,7 @@ class RemindersLocalRepositoryTest {
         repository = RemindersLocalRepository(database.reminderDao(), Dispatchers.Main)
     }
 
+    // closing db after test is ended
     @After
     fun closeDatabase() {
         database.close()
@@ -48,14 +51,17 @@ class RemindersLocalRepositoryTest {
 
     @Test
     fun saveReminder() = runBlocking {
+        // saving a complete reminder
         val reminder = ReminderDTO("test 1", "desc", "loca", 34.12, 34.12)
         repository.saveReminder(reminder)
 
-        val result = repository.getReminder(reminder.id) as? Result.Success
 
+        // getting that reminder by the same id we passed
+        val result = repository.getReminder(reminder.id) as? Result.Success
+// asserting that the returning result is sucsess since we didnt pass shouldReturnError is true
         assertThat(result is Result.Success, `is`(true))
         result as Result.Success
-
+// asserting that the returned reminder has same title,desc,location,lat,lng as the reminder we passed
 
         assertThat(result.data.title, `is`(reminder.title))
         assertThat(result.data.description, `is`(reminder.description))
@@ -66,13 +72,14 @@ class RemindersLocalRepositoryTest {
 
     @Test
     fun deleteReminders_EmptyList() = runBlocking {
+        // saving a complete reminder
         val reminder = ReminderDTO("test 1", "desc", "loca", 34.12, 34.12)
         repository.saveReminder(reminder)
-
+// deleting all reminders
         repository.deleteAllReminders()
-
+// getting reminders
         val result = repository.getReminders()
-
+// asserting that it doesnt return error but return result success and the returning list is empty
         assertThat(result is Result.Success, `is`(true))
         result as Result.Success
 
