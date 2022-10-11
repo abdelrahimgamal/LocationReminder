@@ -48,6 +48,8 @@ class FakeDataSource(private val reminders: MutableList<ReminderDTO> = mutableLi
     // function to set the error by true or false
     fun setShouldReturnError(b: Boolean) {
 
+        // we set this to be true when we are testing that the result should return
+
         shouldReturnError = b
     }
 
