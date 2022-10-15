@@ -49,7 +49,8 @@ class FakeDataSource(private val reminders: MutableList<ReminderDTO> = mutableLi
     fun setShouldReturnError(b: Boolean) {
 
         // we set this to be true when we are testing that the result should return
-
+        // in case we are testing that when we have an error in returning data we set this to true so we get  Result.Error("error in returning data")
+        // in case we are testing that it should return data we set it to false so we can get  Result.Success(reminder)
         shouldReturnError = b
     }
 
