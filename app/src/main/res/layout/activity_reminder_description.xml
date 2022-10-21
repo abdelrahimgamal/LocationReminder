@@ -11,41 +11,81 @@
     </data>
 
     <LinearLayout
-         android:layout_margin="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="20dp"
         android:gravity="start"
         android:orientation="vertical"
         tools:context=".locationreminders.ReminderDescriptionActivity">
 
-        <TextView
-            android:id="@+id/title_textview"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:textSize="@dimen/text_size_large"
-            tools:text="@string/detail_title"
-            android:text="@{@string/detail_title(reminderDataItem.title)}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_margin="@dimen/margin_normal">
 
-        <TextView
-            android:id="@+id/description_textView"
-            android:layout_width="wrap_content"
-            android:layout_marginTop="@dimen/margin_normal"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_large"
-            android:text="@{@string/detail_description(reminderDataItem.description)}"
-            tools:text="@string/detail_description" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reminder_title"
+                android:textSize="@dimen/text_size_large" />
 
-        <TextView
-            android:id="@+id/location_textView"
-            android:layout_width="wrap_content"
-            android:layout_marginTop="@dimen/margin_normal"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:text="@{reminderDataItem.title}"
+                android:textSize="@dimen/text_size_large" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_large"
-            android:text="@{@string/detail_location(reminderDataItem.location)}"
-            tools:text="@string/detail_location" />
+            android:layout_margin="@dimen/margin_normal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reminder_desc"
+                android:textSize="@dimen/text_size_large" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:text="@{reminderDataItem.description}"
+                android:textSize="@dimen/text_size_large" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reminder_location"
+                android:textSize="@dimen/text_size_large" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:text="@{reminderDataItem.location}"
+                android:textSize="@dimen/text_size_large" />
+
+
+        </LinearLayout>
+
 
     </LinearLayout>
 </layout>
