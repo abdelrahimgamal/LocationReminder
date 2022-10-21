@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Application
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.*
@@ -23,6 +24,7 @@ import com.udacity.project4.util.DataBindingIdlingResource
 import com.udacity.project4.util.EspressoIdlingResource
 import com.udacity.project4.util.monitorActivity
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers
 import org.hamcrest.Matchers.not
 import org.junit.After
 import org.junit.Before
@@ -136,6 +138,36 @@ class RemindersActivityTest :
         //Result
         onView(withId(R.id.snackbar_text)).check(matches(withText(R.string.err_enter_title)))
 
+    }
+
+    @Test
+    fun saveReminderScreen_showToastMessage() {
+
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        onView(withId(R.id.addReminderFAB)).perform(click())
+        onView(withId(R.id.reminderTitle)).perform(typeText("Title"))
+        Espresso.closeSoftKeyboard()
+        onView(withId(R.id.reminderDescription)).perform(typeText("Description"))
+        Espresso.closeSoftKeyboard()
+
+        onView(withId(R.id.selectLocation)).perform(click())
+        onView(withId(R.id.map)).perform(longClick())
+        onView(withId(R.id.saveLoca)).perform(click())
+
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        onView(withText(R.string.reminder_saved)).inRoot(withDecorView(
+            CoreMatchers.not(
+                CoreMatchers.`is`(
+                    getActivity(activityScenario).window.decorView
+                )
+            )
+        ))
+            .check(matches(isDisplayed()))
+
+        activityScenario.close()
     }
 
 }

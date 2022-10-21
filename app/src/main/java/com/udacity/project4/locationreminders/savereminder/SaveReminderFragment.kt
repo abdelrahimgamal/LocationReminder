@@ -74,10 +74,7 @@ class SaveReminderFragment : BaseFragment() {
             _viewModel.navigationCommand.value =
                 NavigationCommand.To(SaveReminderFragmentDirections.actionSaveReminderFragmentToSelectLocationFragment())
         }
-        _viewModel.selectedPOI.observe(viewLifecycleOwner) {
-            if (it != null)
-                binding.selectedLocation.text = it.name
-        }
+
 
         binding.saveReminder.setOnClickListener {
             val title = _viewModel.reminderTitle.value

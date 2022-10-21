@@ -26,6 +26,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.BuildConfig
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
+import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
@@ -34,7 +35,6 @@ import java.util.*
 
 class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
-    private lateinit var selectedPOI: PointOfInterest
 
     //Use Koin to get the view model of the SaveReminder
     override val _viewModel: SaveReminderViewModel by inject()
@@ -42,6 +42,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private val TAG = SelectLocationFragment::class.java.simpleName
     private val REQUEST_LOCATION_PERMISSION = 1
+    private var marker: Marker? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -66,14 +67,16 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private fun onLocationSelected() {
 
 
-        if (::selectedPOI.isInitialized) {
-            _viewModel.savePoi(selectedPOI)
+        if ( marker!=null) {
+            marker?.let {marker ->
+                _viewModel.saveLocation(marker.position.latitude,marker.position.longitude,marker.title)
+            }
             findNavController().navigateUp()
 
         } else
             Toast.makeText(
                 requireContext(),
-                "please Select Point of intrest first",
+                "please Select Location first",
                 Toast.LENGTH_SHORT
             ).show()
     }
@@ -110,6 +113,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
         val cairo = LatLng(30.033333, 31.233334)
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(cairo, 16f))
+        marker = map.addMarker(
+            MarkerOptions().position(cairo).snippet("Cairo")
+                .title("Dropped Pin")
+        )
         setPoiClick(map)
         setMapLongClick(map)
         setMapStyle(map)
@@ -118,36 +125,40 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     }
 
+    private fun setPoiClick(map: GoogleMap) {
+        map.setOnPoiClickListener { poi ->
+            map.clear()
+            marker = map.addMarker(MarkerOptions()
+                .position(poi.latLng)
+                .title(poi.name)
+            )
+            marker?.showInfoWindow()
+
+
+            map.animateCamera(CameraUpdateFactory.newLatLng(poi.latLng))
+        }
+    }
+
     private fun setMapLongClick(map: GoogleMap) {
-        this.map.clear()
         map.setOnMapLongClickListener { latLng ->
             // A Snippet is Additional text that's displayed below the title.
+
             val snippet = String.format(
                 Locale.getDefault(),
                 "Lat: %1$.5f, Long: %2$.5f",
                 latLng.latitude,
                 latLng.longitude
             )
-            map.addMarker(
+            map.clear()
+            marker = map.addMarker(
                 MarkerOptions()
                     .position(latLng)
                     .title(getString(R.string.dropped_pin))
                     .snippet(snippet)
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
             )
-        }
-    }
 
-    private fun setPoiClick(map: GoogleMap) {
-        this.map.clear()
-        map.setOnPoiClickListener { poi ->
-            val poiMarker = map.addMarker(
-                MarkerOptions()
-                    .position(poi.latLng)
-                    .title(poi.name)
-            )
-            poiMarker?.showInfoWindow()
-            selectedPOI = poi
+            marker?.showInfoWindow()
+            map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
         }
     }
 
